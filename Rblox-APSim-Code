@@ -1,0 +1,120 @@
+getgenv().autoTap = false;
+getgenv().autoRebirth = false;
+
+local int rebirthAmount = 1;
+
+--UI \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+local DiscordLib =
+    loadstring(game:HttpGet "https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/discord")()
+
+local win = DiscordLib:Window("Anime Punching Simulator")
+
+local serv = win:Server("Main", "http://www.roblox.com/asset/?id=6031075938")
+
+local auto_Tap = serv:Channel("Auto Tap")
+
+local auto_Rebirth = serv:Channel("Auto Rebirth")
+
+auto_Tap:Toggle("Auto Tap",false,function(bool)
+    getgenv().autoTap = bool
+    print("Auto tap is on!")
+    if bool == true then
+        doTap();
+    end
+end)
+
+auto_Rebirth:Toggle("Auto Rebirth",false,function(bool)
+    getgenv().autoRebirth = bool
+    print("Auto Rebirth is on!")
+    if bool == true then
+        autoRebirth();
+    end
+end)
+
+local drops = serv:Channel("Teleports")
+
+local selectedWorld;
+
+local drop =
+    drops:Dropdown(
+    "World",
+    {"Spawn", "Pirates", "Slayer", "Ninja", "Revengers", "Camp", "Slime", "Jujutsu", "Soul", "Morioh", "Hero", "AOT", "Hunter", "Fairy", "One Punch", "Clover", "Sword Art", "TGOH", "Mob", "Force", "Zero", "Ragnarok"},
+    function(value)
+        selectedWorld = value;
+        if selectedWorld then
+            teleportWorld(selectedWorld)
+        end
+        print("This Dropdown Works")
+    end
+)
+
+auto_Rebirth:Textbox(
+    "Rebirth Index",
+    "Type here! The Rebirth amount, for E.G: 1 Rebirth would be 1 and 5 Rebirth 2",
+    true,
+    function(t)
+        rebirthAmount = t;
+    end
+)
+
+local lbls = serv:Channel("Credits")
+
+lbls:Label("UI Goes to dawid#7205, Hacks by Retroapple(GITHUB)")
+
+
+--Functions \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+function doTap()
+    spawn(function ()
+        while autoTap == true do
+            game:GetService("ReplicatedStorage").Remotes.TappingEvent:FireServer()
+            wait(0.1);
+        end
+    end)
+end
+
+doTap()
+
+function autoRebirth()
+    spawn(function()   
+        while getgenv().autoRebirth == true do
+            num = rebirthAmount + 0
+            local args = {
+                [1] = "Rebirths",
+                [2] = num
+            }
+            game:GetService("ReplicatedStorage").Remotes.ClientRemote:InvokeServer(unpack(args))
+            wait()
+        end
+    end)
+end
+
+function getCurrentPlayerPOS()
+    local player = game.Players.LocalPlayer;
+    if player.Character then
+        return player.Character.HumanoidRootPart.Position;
+    end
+    return false;
+end
+
+function teleportTO(placeCFrame)
+    
+    local plyr = game.Players.LocalPlayer;
+    if plyr.Character then
+        plyr.Character.HumanoidRootPart.CFrame = placeCFrame;
+        
+    end
+end
+
+function teleportWorld(world)
+    if game:GetService("Workspace")["__SETTINGS"]["__AREAS"]:FindFirstChild(world) then
+        teleportTO(game:GetService("Workspace")["__SETTINGS"]["__AREAS"][world].CFrame)
+    end
+end
+
+
+local currentPosition = getCurrentPlayerPOS();
+if currentPosition then
+    
+end
