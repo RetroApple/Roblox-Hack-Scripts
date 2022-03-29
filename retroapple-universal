@@ -1,0 +1,132 @@
+local int newWalkSpeed = 16;
+local float newJumpHeight = 7.2;
+
+local player = game:GetService("Players").localPlayer
+local char = player.Character
+local humanoid = char.Humanoid
+
+--------------------------------- Functions ---------------------------------
+
+local game_meta = getrawmetatable(game)
+
+setreadonly(game_meta, false)
+
+local oldIndex = game_meta.__index
+
+-- WalkSpeed --
+
+function setSpeed()
+    game_meta.__index = function(self, b)
+        num = newWalkSpeed + 0
+        if b == "WalkSpeed" then
+            return 16
+        end
+        return oldIndex(self, b)
+    end
+    humanoid.WalkSpeed = num;
+end
+
+-- JumpHeight --
+
+function setJumpHeight()
+    game_meta.__index = function(self, b)
+        num = newJumpHeight + 0
+        if b == "JumpHeight" then
+            print(b)
+            return 7.2
+        end
+        return oldIndex(self, b)
+    end
+    humanoid.JumpHeight = newJumpHeight;
+end
+
+-- NoClip --
+
+local donoclip = false
+local noclip = false
+ 
+function b_noclip()
+        if noclip == false then
+            donoclip = true
+            noclip = true
+        elseif noclip == true then
+            donoclip = false
+            noclip = false
+        end
+end
+
+game:GetService("Players").LocalPlayer.Character.Head.Touched:connect(function(obj)
+    if obj ~= workspace.Terrain then
+        if donoclip == true then
+            obj.CanCollide = false
+        else
+            obj.CanCollide = true
+        end
+    end
+end)
+
+--------------------------------- UI ---------------------------------
+
+local DiscordLib =
+    loadstring(game:HttpGet "https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/discord")()
+
+local win = DiscordLib:Window("RetroApple's Universal Hack")
+
+local serv = win:Server("Main", "http://www.roblox.com/asset/?id=6031075938")
+
+local lcal = serv:Channel("Local Player")
+
+local info = serv:Channel("Credits")
+
+-- lcal:Button(
+--     "Kill all",
+--     function()
+--         DiscordLib:Notification("Notification", "Killed everyone!", "Okay!")
+--     end
+-- )
+
+lcal:Button(
+    "JumpHeight",
+    function()
+        setJumpHeight()
+    end
+)
+
+lcal:Textbox(
+    "Jump Height Amount",
+    "Set jump height here!",
+    true,
+    function(t)
+        newJumpHeight = t;
+    end
+)
+
+lcal:Seperator()
+
+lcal:Button(
+    "WalkSpeed",
+    function()
+        setSpeed()
+    end
+)
+
+lcal:Textbox(
+    "Speed Amount",
+    "Set speed here!",
+    true,
+    function(t)
+        newWalkSpeed = t;
+    end
+)
+
+lcal:Seperator()
+
+lcal:Bind(
+    "NoClip",
+    Enum.KeyCode.B,
+    function()
+        b_noclip();
+    end
+)
+
+info:Label("Credits: UI By dawid#7205, Script by: RetroApple21 (GitHub)")
