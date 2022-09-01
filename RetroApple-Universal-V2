@@ -442,12 +442,6 @@ local player = game:GetService("Players").localPlayer
 local char = player.Character
 local humanoid = char.Humanoid
 
-SpeedInput.FocusLost:Connect(function(enter)
-		if enter then
-				local int newWalkSpeed = SpeedInput.Text
-				setSpeed(newWalkSpeed)
-		end
-end)
 --------------------------------- Functions ---------------------------------
 
 local game_meta = getrawmetatable(game)
@@ -458,17 +452,33 @@ local oldIndex = game_meta.__index
 
 -- WalkSpeed --
 
-function setSpeed(newWalkSpeed)
-    game_meta.__index = function(self, b)
-        num = newWalkSpeed + 0
-        if b == "WalkSpeed" then
-            return 16
-        end
-        return oldIndex(self, b)
-    end
-    humanoid.WalkSpeed = num;
-end
+-- function setSpeed(newWalkSpeed)
+--     game_meta.__index = function(self, b)
+--         local int num = newWalkSpeed + 0
+--         if b == "WalkSpeed" then
+--             return 16
+--         end
+--         return oldIndex(self, b)
+--     end
+--     humanoid.WalkSpeed = num;
+-- end
 
+SpeedInput.FocusLost:Connect(function(enter)
+	if enter then
+			local int newWalkSpeed = tonumber(SpeedInput.Text)
+			game_meta.__index = function(self, b)
+				        local int num = newWalkSpeed
+				        if b == "WalkSpeed" then
+				            return 16
+				        end
+				        return oldIndex(self, b)
+				    end
+						 
+			-- setSpeed(newWalkSpeed)
+	end
+	print(humanoid.WalkSpeed)
+	humanoid.WalkSpeed = num;
+end)
 
 UICorner_15.Parent = SpeedInput
 
