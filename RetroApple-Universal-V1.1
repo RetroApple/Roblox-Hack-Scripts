@@ -1,3 +1,5 @@
+-- Sciprt by RetroApple
+
 local ScreenGui = Instance.new("ScreenGui")
 local Main = Instance.new("Frame")
 local TopBar = Instance.new("TextLabel")
@@ -436,48 +438,37 @@ SpeedInput.Text = ""
 SpeedInput.TextColor3 = Color3.fromRGB(111, 140, 220)
 SpeedInput.TextSize = 24.000
 
-local int newWalkSpeed = 16;
+-- local int newWalkSpeed = 16;
 
-local player = game:GetService("Players").localPlayer
-local char = player.Character
-local humanoid = char.Humanoid
+-- local LocalPlayer = game:GetService("Players").localPlayer
+-- local char = LocalPlayer:WaitForChild("Character")
+-- local humanoid = char:WaitForChild("Humanoid")
 
 --------------------------------- Functions ---------------------------------
 
-local game_meta = getrawmetatable(game)
-
-setreadonly(game_meta, false)
-
-local oldIndex = game_meta.__index
-
--- WalkSpeed --
-
--- function setSpeed(newWalkSpeed)
---     game_meta.__index = function(self, b)
---         local int num = newWalkSpeed + 0
---         if b == "WalkSpeed" then
---             return 16
---         end
---         return oldIndex(self, b)
---     end
---     humanoid.WalkSpeed = num;
--- end
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Character = LocalPlayer.Character
+local Humanoid = Character:WaitForChild("Humanoid")
 
 SpeedInput.FocusLost:Connect(function(enter)
 	if enter then
-			local int newWalkSpeed = tonumber(SpeedInput.Text)
-			game_meta.__index = function(self, b)
-				        local int num = newWalkSpeed
-				        if b == "WalkSpeed" then
-				            return 16
-				        end
-				        return oldIndex(self, b)
-				    end
-						 
-			-- setSpeed(newWalkSpeed)
+		local OldIndex = nil
+		local int newWalkSpeed = tonumber(SpeedInput.Text)
+
+			if Character:FindFirstChild("Humanoid") then
+				print("We found the Humanoid!!!!")
+	
+				OldIndex = hookmetamethod(game, "__index", function(Self, B)
+					if not checkcaller() and Self == Humanoid and B == "WalkSpeed" then
+							return 16
+					end
+					return OldIndex(Self, B)
+				end)
+				print("What Roblox sees: "..Humanoid.WalkSpeed.. " Actual Speed: ".. newWalkSpeed)
+				Humanoid.WalkSpeed = newWalkSpeed;
+			end
+		
 	end
-	print(humanoid.WalkSpeed)
-	humanoid.WalkSpeed = num;
 end)
 
 UICorner_15.Parent = SpeedInput
@@ -860,3 +851,5 @@ local function IVBFHLG_fake_script() -- TextButton.LocalScript
 
 end
 coroutine.wrap(IVBFHLG_fake_script)()
+
+-- Sciprt by RetroApple
